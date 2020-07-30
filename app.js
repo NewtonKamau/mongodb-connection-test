@@ -1,7 +1,6 @@
 //jshint esversion:6
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-const { finished } = require('stream');
+const mongoose = require('mongoose');
+
 
 //host or connection url
 const url = 'mongodb://localhost:27017';
