@@ -1,6 +1,7 @@
 //jshint esversion:6
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert');
+const { finished } = require('stream');
 
 //host or connection url
 const url = 'mongodb://localhost:27017';
@@ -19,7 +20,7 @@ client.connect(function (err) {
     
     const db = client.db(dbName);
     //call the insert methof and close the connection to the db
-    insertDocuments(db, function () {
+    findDocuments (db, function () {
         client.close();
     });
 });
@@ -53,5 +54,17 @@ const insertDocuments = function (db, callback) {
             assert.equal(3, result.ops.length);
             console.log('Inserted 3 documents into the collection');
             callback(result);
+    });
+}
+//get the db records
+const findDocuments = function (db, callback) {
+    //get the fruits collection 
+    const collection = db.collection('fruits');
+    //find some of the fruits
+    collection.find({}).toArray(function (err, fruits) {
+        assert.equal(err, null);
+        console.log('Found the following fruit records');
+        console.log(fruits);
+        callback(fruits);
     });
 }
