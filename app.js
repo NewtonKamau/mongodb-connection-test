@@ -1,69 +1,38 @@
 //jshint esversion:6
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); 
 
 
 //host or connection url
-const url = 'mongodb://localhost:27017';
-
-//database name
-const dbName = 'fruitsDB';
-//create a new mongo client 
-const client = new MongoClient(url, {
+mongoose.connect("mongodb://localhost:27017/fruitsDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-//use connection method to connect to the server
-client.connect(function (err) {
-    assert.equal(null, err);
-    console.log('connected successfully to the server ');
-    
-    const db = client.db(dbName);
-    //call the insert methof and close the connection to the db
-    findDocuments (db, function () {
-        client.close();
-    });
+//database name
+var fruitsSchema = new mongoose.Schema({
+    name: String,
+    rating: Number,
+    rating : String
 });
+//create a model with singular collection name and the name of the collection as params
+const Fruit = new mongoose.model('Fruit', fruitsSchema);
+//initialize the model same as insert into in sql
+const fruit = new Fruit({
+    name: 'Apple',
+    rating: 8,
+    review: 'An apple a day keeps the doctor away'
+});
+fruit.save();
 
-//create a collection or create a database table
-const insertDocuments = function (db, callback) {
-    //get the documents collection
-    const collection = db.collection('fruits');
+var peopleSchema = new mongoose.Schema({
+    name: String,
+    age:Number
+});
+const People = new mongoose.model('People', peopleSchema);
+const person = new People({
+    name: 'John Doe',
+    age: 26
+    
+});
+person.save();
 
-    //insert some documents or create method for sql
-    collection.insertMany([
-        {
-            name: 'Apple',
-            score: 9,
-            review: 'an apple a day surely keeps the doctor away'
-        },
-        {
-            name: 'Banana',
-            score: 5,
-            review: 'the center of kisii heart for a good reason'
-        },
-        {
-            name: 'Orange',
-            score: 3,
-            review: 'No wonder Raila never became president'
 
-        }
-    ], function (err, result) {
-            assert.equal(err, null);
-            assert.equal(3, result.result.n);
-            assert.equal(3, result.ops.length);
-            console.log('Inserted 3 documents into the collection');
-            callback(result);
-    });
-}
-//get the db records
-const findDocuments = function (db, callback) {
-    //get the fruits collection 
-    const collection = db.collection('fruits');
-    //find some of the fruits
-    collection.find({}).toArray(function (err, fruits) {
-        assert.equal(err, null);
-        console.log('Found the following fruit records');
-        console.log(fruits);
-        callback(fruits);
-    });
-}
